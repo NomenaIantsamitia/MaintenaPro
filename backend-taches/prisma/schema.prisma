@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Utilisateur {
+  id            Int             @id @default(autoincrement())
+  nom_complet   String
+  email         String          @unique
+  password      String
+  role          Role            @default(TECHNICIEN)
+  status        Status          @default(ACTIF)
+  photo         String?         // URL ou chemin vers la photo
+  domaineId     Int?            // clé étrangère facultative
+  domaine       Domaine?        @relation(fields: [domaineId], references: [id])
+  maintenances  Maintenance[]   // 🔁 relation inverse vers Maintenance
+  notifications Notification[]  // 🔁 relation inverse vers Notification
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+enum Role {
+  ADMIN
+  TECHNICIEN
+}
+
+enum Status {
+  ACTIF
+  INACTIF
+}
+
+model Categorie {
+  id          Int         @id @default(autoincrement())
+  nom         String      @unique
+  description String?
+  domaineId   Int
+  domaine     Domaine     @relation(fields: [domaineId], references: [id])
+  materiels   Materiel[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Domaine {
+  id           Int           @id @default(autoincrement())
+  nom          String
+  description  String
+  categories   Categorie[]
+  techniciens  Utilisateur[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model Materiel {
+  id              Int            @id @default(autoincrement())
+  nom             String
+  numeroSerie     String         @unique
+  statut          StatutMateriel @default(STOCK)
+  localisation    String
+  dateAcquisition DateTime
+  categorieId     Int
+  categorie       Categorie      @relation(fields: [categorieId], references: [id])
+  maintenances    Maintenance[]  // 🔁 relation inverse vers Maintenance
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+enum StatutMateriel {
+  ACTIF
+  EN_MAINTENANCE
+  EN_PANNE
+  STOCK
+}
+
+model Maintenance {
+  id             Int               @id @default(autoincrement())
+  materielId     Int
+  technicienId   Int
+  description    String
+  dateDebut      DateTime
+  statut         StatutMaintenance @default(PLANIFIEE)
+  priorite       Priorite          @default(MOYENNE)
+
+  materiel       Materiel          @relation(fields: [materielId], references: [id])
+  technicien     Utilisateur       @relation(fields: [technicienId], references: [id])
+  notifications  Notification[]    // 🔁 notifications liées à cette maintenance
+    rapports       Rapport[]         // ✅ relation inverse vers Rapport
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+enum StatutMaintenance {
+  PLANIFIEE
+  EN_COURS
+  TERMINEE
+  ANNULEE
+}
+
+enum Priorite {
+  BASSE
+  MOYENNE
+  HAUTE
+  URGENTE
+}
+
+model Notification {
+  id             Int              @id @default(autoincrement())
+  titre          String
+  message        String
+  lu             Boolean          @default(false)
+  type           TypeNotification @default(ASSIGNATION)
+  maintenanceId  Int?             // Peut être lié à une maintenance spécifique
+  maintenance    Maintenance?     @relation(fields: [maintenanceId], references: [id])
+  utilisateurId  Int              // Destinataire (technicien ou admin)
+  utilisateur    Utilisateur      @relation(fields: [utilisateurId], references: [id])
+  createdAt      DateTime         @default(now())
+}
+
+enum TypeNotification {
+  ASSIGNATION    // Nouvelle maintenance assignée
+  MISE_A_JOUR    // Statut de maintenance modifié
+  RAPPORT        // Nouveau rapport ajouté
+  INFORMATION    // Autres alertes ou infos système
+}
+
+model Rapport {
+  id             Int          @id @default(autoincrement())
+  maintenanceId Int @unique
+  maintenance    Maintenance  @relation(fields: [maintenanceId], references: [id])
+  contenu        String
+  dateRapport    DateTime     @default(now())
+}
