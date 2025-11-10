@@ -111,7 +111,7 @@ export const SidebarTechnicien = () => {
       >
         {/* En-tête avec logo et notifications */}
         <div className="flex items-center justify-between h-16 border-b border-emerald-600 px-4">
-          <h1 className="text-lg font-bold tracking-wide">Espace Tech</h1>
+          <h1 className="text-lg font-bold tracking-wide">MaintenaPro</h1>
 
           {/* 🔔 Icône de notification dynamique */}
           <div className="relative">

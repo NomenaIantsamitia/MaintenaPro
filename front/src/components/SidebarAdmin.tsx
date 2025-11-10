@@ -115,7 +115,7 @@ export const SidebarAdmin = () => {
       >
         {/* En-tête */}
         <div className="flex items-center justify-between h-16 border-b border-blue-600 px-4">
-          <h1 className="text-xl font-bold tracking-wide">Espace Admin</h1>
+          <h1 className="text-xl font-bold tracking-wide">MaintenaPro</h1>
 
           {/* 🔔 Notifications dynamiques */}
           <div className="relative">
