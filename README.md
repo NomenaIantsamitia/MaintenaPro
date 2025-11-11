@@ -19,7 +19,7 @@ tout est pensé pour améliorer l’efficacité opérationnelle de votre équipe
   
   ## 🖥️ Captures d’écran
 ### Tableau de bord principal
-![Dashboard MaintenaPro](../public/images/dashboard.png)
+![Dashboard MaintenaPro](front/public/images/dashboard.png)
 
 ## 🖥️ Technologies utilisées
 
