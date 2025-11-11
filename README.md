@@ -19,22 +19,57 @@ tout est pensé pour améliorer l’efficacité opérationnelle de votre équipe
   
   ## 🖥️ Captures d’écran
 ### Tableau de bord principal
-![Dashboard MaintenaPro](./public/images/dashboard.png)
+![Dashboard MaintenaPro](../public/images/dashboard.png)
 
 ## 🖥️ Technologies utilisées
 
 **Frontend**
 - React 18 + TypeScript  
 - TailwindCSS pour un design moderne et responsive  
-- Axios pour les requêtes API  
-- Chart.js pour des graphiques interactifs  
+- Axios pour les requêtes API   
 
 **Backend**
 - Node.js + Express  
 - Prisma ORM avec PostgreSQL  
 - Bcrypt & JWT pour une sécurité optimale
+- Socket.io — notifications en temps réel
 
 ## 🚀 Installation rapide
 
 ### 1️⃣ Cloner le projet
 ```bash
+git clone https://github.com/NomenaIantsamitia/MaintenaPro.git
+cd chat
+
+2️⃣ Installer et lancer le frontend
+cd front
+npm install
+npm run dev
+
+3️⃣ Installer et lancer le backend
+cd ../backend-taches
+npm install
+npx prisma migrate dev
+npm run dev
+
+4️⃣ Ouvrir l’application
+http://localhost:5173
+
+Interface moderne et responsive adaptée à toutes tailles d’écran
+
+Notifications et rapports automatisés
+
+Code propre et structuré : prêt pour la production
+
+Projet pensé pour les entreprises réelles
+
+📬 Contact
+
+MIT License © 2025 Ton Nom
+💌 Email : nomena.misedratiana05@gmail.com
+💼 Portfolio : ton-portfolio.com
+
+
+
+
+
