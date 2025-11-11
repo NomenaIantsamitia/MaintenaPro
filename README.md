@@ -64,11 +64,13 @@ Code propre et structuré : prêt pour la production
 
 Projet pensé pour les entreprises réelles
 
-📬 Contact
+## 📬 Contact
 
-MIT License © 2025 Ton Nom
-💌 Email : nomena.misedratiana05@gmail.com
-💼 Portfolio : ton-portfolio.com
+**MIT License © 2025 Nomena Misedratiana**
+
+💌 **Email :** [nomena.misedratiana05@gmail.com](mailto:nomena.misedratiana05@gmail.com)  
+💼 **Portfolio :** [https://nomena-portfolio.vercel.app](https://nomena-portfolio.vercel.app)  
+
 
 
 
