@@ -25,7 +25,7 @@ tout est pensé pour améliorer l’efficacité opérationnelle de votre équipe
 ## 🖥️ Technologies utilisées
 
 **Frontend**
-- React 18 + TypeScript  
+- React 19 + TypeScript  
 - TailwindCSS pour un design moderne et responsive  
 - Axios pour les requêtes API   
 
