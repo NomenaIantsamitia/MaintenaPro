@@ -199,7 +199,7 @@ io.to(`user_${data.technicienId}`).emit("update_unread_count", unreadCount);
    // ✅ Modifier le statut d'une maintenance + notifier l'admin
    static async updateStatut(id: number, statut: string) {
     return prisma.$transaction(async (tx) => {
-      // 1️⃣ Vérifier la maintenance
+      // 1️⃣ Vérifier la maintenance existante
       const maintenance = await tx.maintenance.findUnique({
         where: { id },
         include: { materiel: true, technicien: true },
@@ -209,18 +209,27 @@ io.to(`user_${data.technicienId}`).emit("update_unread_count", unreadCount);
         throw new Error(`Aucune maintenance trouvée avec l'id ${id}`);
       }
 
-      // 2️⃣ Mettre à jour le statut
+      // 2️⃣ Vérifier si le statut envoyé correspond bien à l'enum Prisma
+      const statutEnum = StatutMaintenance[statut as keyof typeof StatutMaintenance];
+      if (!statutEnum) {
+        throw new Error(`Statut invalide : ${statut}`);
+      }
+
+      // 3️⃣ Mettre à jour la maintenance avec le bon statut
       const updated = await tx.maintenance.update({
         where: { id },
-        data: { statut: statut as StatutMaintenance },
-        include: { materiel: true, technicien: true },
+        data: { statut: statutEnum },
       });
 
-      // 3️⃣ Adapter le statut du matériel
-      let nouveauStatut: StatutMateriel | null = null;
-      if (statut === "EN_COURS") nouveauStatut = "EN_MAINTENANCE";
-      else if (statut === "TERMINEE") nouveauStatut = "ACTIF";
-      else if (statut === "ANNULER") nouveauStatut = "ACTIF";
+      // 4️⃣ Mettre à jour le matériel en fonction du statut de maintenance
+      let nouveauStatut: "EN_MAINTENANCE" | "ACTIF" | null = null;
+
+      if (statutEnum === StatutMaintenance.EN_COURS) nouveauStatut = "EN_MAINTENANCE";
+      else if (
+        statutEnum === StatutMaintenance.TERMINEE ||
+        statutEnum === StatutMaintenance.ANNULEE
+      )
+        nouveauStatut = "ACTIF";
 
       if (nouveauStatut) {
         await tx.materiel.update({
@@ -229,24 +238,27 @@ io.to(`user_${data.technicienId}`).emit("update_unread_count", unreadCount);
         });
       }
 
-      const admin = await tx.utilisateur.findFirst({
-        where: { role: 'ADMIN' },
-      });
-      if (!admin) throw new Error("Aucun administrateur trouvé dans le système");
-
-      // 4️⃣ Créer une notification claire pour l'admin
-      const notification = await tx.notification.create({
-        data: {
-          titre: `Maintenance ${statut}`,
-          message: `La maintenance du matériel "${maintenance.materiel.nom}" a été mise à jour en statut "${statut}" par ${maintenance.technicien.nom_complet}.`,
-          utilisateurId:admin.id, // 🧠 ID de l'admin (ou boucle si plusieurs)
-          type: TypeNotification.MISE_A_JOUR,
-          maintenanceId: maintenance.id,
-        },
+      // 5️⃣ Trouver tous les administrateurs actifs
+      const admins = await tx.utilisateur.findMany({
+        where: { role: "ADMIN", status: "ACTIF" },
       });
 
-      // 5️⃣ Envoyer en temps réel via WebSocket
-      io.emit("nouvelle_notification", notification);
+      // 6️⃣ Créer et envoyer une notification pour chaque admin
+      for (const admin of admins) {
+        const notification = await tx.notification.create({
+          data: {
+            titre: `Maintenance ${statutEnum}`,
+            message: `La maintenance du matériel "${maintenance.materiel.nom}" est maintenant "${statutEnum}".`,
+            utilisateurId: admin.id,
+            type: "MISE_A_JOUR",
+            maintenanceId: maintenance.id,
+          },
+        });
+
+        // 🔥 Notification en temps réel à l’admin connecté
+        io.to(`user_${admin.id}`).emit("nouvelle_notification", notification);
+        console.log(`📢 Notification envoyée à l'admin ID ${admin.id}`);
+      }
 
       return updated;
     });
