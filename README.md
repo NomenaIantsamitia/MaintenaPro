@@ -10,7 +10,7 @@ tout est pensé pour améliorer l’efficacité opérationnelle de votre équipe
 - Gestion complète des utilisateurs (Admin et Technicien)
 - Gestion des matériels et équipements avec statut en temps réel
 - Planification et suivi des maintenances
-- Exporter en pdf/csv les données
+- Exportation des données au format PDF ou CSV
 - Priorisation des tâches : Basse, Moyenne, Haute, Urgente
 - Notifications en temps réel pour les techniciens et admins
 - Rapports automatiques après chaque maintenance
