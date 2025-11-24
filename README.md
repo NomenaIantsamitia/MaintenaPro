@@ -68,8 +68,7 @@ Projet pensé pour les entreprises réelles
 
 **MIT License © 2025 Nomena Misedratiana**
 
-💌 **Email :** [nomena.misedratiana05@gmail.com](mailto:nomena.misedratiana05@gmail.com)  
-💼 **Portfolio :** [https://nomena-portfolio.vercel.app](https://nomena-portfolio.vercel.app)  
+
 
 
 
